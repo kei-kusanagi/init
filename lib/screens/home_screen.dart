@@ -12,20 +12,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   void toggleDarkMode() {
-    bool _isDark = Provider.of<ThemeModel>(context, listen: false).isDark;
-
     setState(() {
-      _isDark = !_isDark;
-      Provider.of<ThemeModel>(context, listen: false).isDark = _isDark;
+      final themeModel = Provider.of<ThemeModel>(context, listen: false);
+      themeModel.isDark = !themeModel.isDark;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    Color pickerColor =
-        Provider.of<ThemeModel>(context, listen: false).colorTheme;
-    Color currentColor =
-        Provider.of<ThemeModel>(context, listen: false).colorTheme;
+    final themeModel = Provider.of<ThemeModel>(context, listen: false);
+    Color pickerColor = themeModel.colorTheme;
 
     void changeColor(Color color) {
       setState(() => pickerColor = color);
@@ -33,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: pickerColor,
         title: const Text('Inicio'),
         actions: [
           IconButton(
@@ -53,15 +50,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ElevatedButton(
                         child: const Text('Got it'),
                         onPressed: () {
-                          setState(() => currentColor = pickerColor);
-                          Provider.of<ThemeModel>(context, listen: false)
-                              .colorTheme = pickerColor;
-
+                          setState(() {
+                            themeModel.colorTheme = pickerColor;
+                          });
                           Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Provider.of<ThemeModel>(context).colorTheme,
+                          backgroundColor: pickerColor,
                         ),
                       ),
                     ],
@@ -72,14 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.color_lens),
           ),
           IconButton(
-            icon: Provider.of<ThemeModel>(context, listen: false).isDark
-                ? Icon(Icons.sunny)
-                : Icon(Icons.nights_stay),
-            onPressed: () {
-              setState(() {
-                toggleDarkMode();
-              });
-            },
+            icon:
+                themeModel.isDark ? Icon(Icons.sunny) : Icon(Icons.nights_stay),
+            onPressed: toggleDarkMode,
           ),
         ],
       ),
